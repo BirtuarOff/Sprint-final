@@ -9,12 +9,12 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-@WebServlet(value = "/home.html")
-public class HomeServlet extends HttpServlet {
+
+@WebServlet(value = "/session-page")
+public class SessionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String text = (String) session.getAttribute("userName");
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        session.setAttribute("userName","Azat");
     }
 }

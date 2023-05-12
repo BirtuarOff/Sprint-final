@@ -5,7 +5,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kz.techorda.bitlab.servlet.db.DBConnection;
+import jakarta.servlet.http.HttpSession;
+import kz.techorda.bitlab.servlet.db.DBManager;
+import kz.techorda.bitlab.servlet.db.User;
 
 import java.io.IOException;
 
@@ -13,18 +15,21 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/login.jsp").forward(request,response);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email_entered");
-        String password = request.getParameter("pwd_entered");
-        if (DBConnection.checkUser(email,password)){
-            String fullName = DBConnection.getFullName(email);
-            request.setAttribute("fullName", fullName);
-            request.getRequestDispatcher("/userpage.jsp").forward(request,response);
-        } else
-            response.sendRedirect("/login.jsp?wronguser");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+
+        User user = DBManager.getUser(email);
+        if(user!=null && user.getPassword().equals(password)) {
+            HttpSession session = request.getSession();
+            session.setAttribute("currentUser", user);
+            response.sendRedirect("/profile");
+        } else {
+            response.sendRedirect("/login?error");
+        }
     }
 }

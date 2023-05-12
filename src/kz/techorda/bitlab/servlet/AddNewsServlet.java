@@ -5,16 +5,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import kz.techorda.bitlab.servlet.db.User;
 
 import java.io.IOException;
+@WebServlet(value = "/add-news-page")
+public class AddNewsServlet extends HttpServlet {
 
-@WebServlet(value = "/home.html")
-public class HomeServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        String text = (String) session.getAttribute("userName");
-        request.getRequestDispatcher("/index.jsp").forward(request, response);
+        User user = (User) request.getSession().getAttribute("currentUser");
+        if(user!=null) {
+
+            request.getRequestDispatcher("/addnews.jsp").forward(request, response);
+
+        }else{
+            response.sendRedirect("/login");
+        }
     }
 }
